@@ -69,3 +69,44 @@ Socket available at http://localhost:PORT
 ## TODO
 
 Implement real Data and real events
+
+For now random numbers are sent over to the client
+
+```py
+@sio.on('data_request')
+async def send_data(sid):
+    print("Sending data")
+    global SEND_DATA
+    SEND_DATA = True
+    while(SEND_DATA):
+        sensor_data = 100
+        if (random.uniform(0, 1) > 0.5):
+            sensor_data += random.uniform(0, 1) * 200
+        else:
+            sensor_data -= random.uniform(0, 1) * 200
+        data = {
+            'x': int(time.time() * 1000),
+            'y': sensor_data
+        }
+        await sio.emit('data', data)
+        await asyncio.sleep(5/1000)
+
+```
+
+The data acquisition script is launched in a subprocess and when it's stopped the subprocess received a SIGTERM
+
+```py
+@sio.on('launch_script')
+async def launch_script(sid):
+    print("Launching script")
+    global process
+    process = subprocess.Popen(
+        ["python", "cont_scan_csv.py"],
+        shell=False)
+
+@sio.on('kill_script')
+async def kill_script(sid):
+    print("Killing script")
+    global process
+    process.send_signal(SIGINT)
+```
