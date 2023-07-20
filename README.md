@@ -1,5 +1,4 @@
 # SocketIOServer
-## The Dashboard Front End
 
 ## Table Of Contents
 
@@ -14,7 +13,7 @@
 
 ## About The Project
 
-Socket Server to keep running to respond to clients 
+Socket Server to keep running to respond to clients (intended to be running on Raspberry Pi)
 
 ## Built With
 
@@ -48,7 +47,22 @@ python ./socket_server.py
 
 ### Socket Usage
 
+Socket init
 
+```py
+sio = socketio.AsyncServer(async_mode='aiohttp', cors_allowed_origins='*')
+app = web.Application()
+sio.attach(app)
+```
+
+Events based socket server eg:
+
+```py
+@sio.on('data_request')
+async def send_data(sid):
+    # data = ...............
+    await sio.emit('data', data)
+```
 
 Socket available at http://localhost:PORT
 
