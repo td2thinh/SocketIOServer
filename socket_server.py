@@ -3,20 +3,8 @@ import asyncio
 import socketio
 import random
 import time
-import os
 import subprocess
 from signal import SIGTERM, SIGINT
-
-
-import threading
-
-
-def set_interval(f, time, *args):
-    def inner():
-        set_interval(f, time, *args)
-        f(*args)
-    return threading.Timer(time, inner).start()
-
 
 sio = socketio.AsyncServer(async_mode='aiohttp', cors_allowed_origins='*')
 app = web.Application()
